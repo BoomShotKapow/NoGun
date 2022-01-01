@@ -1,6 +1,6 @@
 #include <clientprefs>
 #include <outputinfo>
-#include <smlib/effects>
+#include <smlib>
 #include <sourcemod>
 
 #pragma newdecls required
