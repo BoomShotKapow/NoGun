@@ -229,8 +229,6 @@ bool TREnumSolidEdicts(int entity, any client)
 
     for(int i = 0; i < sizeof(gS_EntityInputs); i++)
     {
-        PrintDebug("Test: [%s] [%s]", gS_EntityInputs[i], gS_EntityOutputs[i]);
-
         if(StrContains(className, "breakable") != -1)
         {
             if(Entity_HasSpawnFlags(entity, SF_BREAK_TRIGGER_ONLY))
