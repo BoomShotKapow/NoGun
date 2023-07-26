@@ -21,7 +21,7 @@ public Plugin myinfo =
 };
 
 //command for getting a clien't name
-COLOR gI_ImpactColor[MAXPLAYERS + 1];
+Color gI_ImpactColor[MAXPLAYERS + 1];
 
 int gI_BeamSprite;
 int gI_HaloSprite;
@@ -77,7 +77,7 @@ public void OnClientCookiesCached(int client)
     cookie[0] = '\0';
 
     gC_ImpactColorIndex.Get(client, cookie, sizeof(cookie));
-    gI_ImpactColor[client] = (strlen(cookie) > 0) ? view_as<COLOR>(StringToInt(cookie)) : RED;
+    gI_ImpactColor[client] = (strlen(cookie) > 0) ? view_as<Color>(StringToInt(cookie)) : RED;
     cookie[0] = '\0';
 }
 
@@ -194,10 +194,10 @@ public int ImpactColor_MenuHandler(Menu menu, MenuAction action, int param1, int
             char data[2];
             IntToString(color, data, sizeof(data));
 
-            gI_ImpactColor[param1] = view_as<COLOR>(color);
+            gI_ImpactColor[param1] = view_as<Color>(color);
             gC_ImpactColorIndex.Set(param1, data);
 
-            CreateColorMenu(param1, view_as<COLOR>(color), ImpactColor_MenuHandler);
+            CreateColorMenu(param1, view_as<Color>(color), ImpactColor_MenuHandler);
         }
 
         case MenuAction_Cancel:
