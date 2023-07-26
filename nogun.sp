@@ -20,7 +20,8 @@ public Plugin myinfo =
     url         = "https://github.com/BoomShotKapow/NoGun"
 };
 
-Color gI_ImpactColor[MAXPLAYERS + 1];
+//command for getting a clien't name
+COLOR gI_ImpactColor[MAXPLAYERS + 1];
 
 int gI_BeamSprite;
 int gI_HaloSprite;
@@ -76,7 +77,7 @@ public void OnClientCookiesCached(int client)
     cookie[0] = '\0';
 
     gC_ImpactColorIndex.Get(client, cookie, sizeof(cookie));
-    gI_ImpactColor[client] = (strlen(cookie) > 0) ? StringToInt(cookie) : view_as<int>(RED);
+    gI_ImpactColor[client] = (strlen(cookie) > 0) ? view_as<COLOR>(StringToInt(cookie)) : RED;
     cookie[0] = '\0';
 }
 
@@ -95,7 +96,7 @@ public void OnClientPutInServer(int client)
 
 public void OnClientConnected(int client)
 {
-    gF_Delay[client]       = 0.0;
+    gF_Delay[client] = 0.0;
 }
 
 public void OnMapStart()
@@ -159,7 +160,7 @@ public int NoGun_MenuHandler(Menu menu, MenuAction action, int param1, int param
             }
             else if(StrEqual(info, "impactcolor"))
             {
-                CreateColorMenu(param1, gI_ImpactColor[param1], ImpactColor_Callback);
+                CreateColorMenu(param1, gI_ImpactColor[param1], ImpactColor_MenuHandler);
 
                 return 0;
             }
@@ -179,18 +180,36 @@ public int NoGun_MenuHandler(Menu menu, MenuAction action, int param1, int param
     return 0;
 }
 
-public void ImpactColor_Callback(int client, Color color, bool exitBack)
+public int ImpactColor_MenuHandler(Menu menu, MenuAction action, int param1, int param2)
 {
-    if(exitBack)
+    switch(action)
     {
-        CreateNoGunMenu(client);
+        case MenuAction_Select:
+        {
+            char info[64];
+            menu.GetItem(param2, info, sizeof(info));
+
+            int color = StringToInt(info);
+
+            char data[2];
+            IntToString(color, data, sizeof(data));
+
+            gI_ImpactColor[param1] = view_as<COLOR>(color);
+            gC_ImpactColorIndex.Set(param1, data);
+
+            CreateColorMenu(param1, view_as<COLOR>(color), ImpactColor_MenuHandler);
+        }
+
+        case MenuAction_Cancel:
+        {
+            if(param2 == MenuCancel_ExitBack)
+            {
+                CreateNoGunMenu(param1);
+            }
+        }
     }
 
-    char data[2];
-    IntToString(view_as<int>(color), data, sizeof(data));
-
-    gI_ImpactColor[client] = color;
-    gC_ImpactColorIndex.Set(client, data);
+    return 0;
 }
 
 public void OnPlayerRunCmdPost(int client, int buttons, int impulse, const float vel[3], const float angles[3], int weapon, int subtype, int cmdnum, int tickcount, int seed, const int mouse[2])
