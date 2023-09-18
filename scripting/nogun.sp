@@ -20,7 +20,6 @@ public Plugin myinfo =
     url         = "https://github.com/BoomShotKapow/NoGun"
 };
 
-//command for getting a clien't name
 Color gI_ImpactColor[MAXPLAYERS + 1];
 
 int gI_BeamSprite;
@@ -54,9 +53,9 @@ public void OnPluginStart()
     for(int client = 1; client <= MaxClients; client++)
     {
         if(IsClientInGame(client) && !IsFakeClient(client))
-		{
-			OnClientPutInServer(client);
-		}
+        {
+            OnClientPutInServer(client);
+        }
     }
 }
 
@@ -338,55 +337,55 @@ stock bool Entity_HasSpawnFlags(int entity, int flags)
 //https://github.com/bcserv/smlib/blob/aad2c8e963dbd7790096efd7920bd9f3cf76082d/scripting/include/smlib/effects.inc#L208-L227
 stock void Effect_DrawBeamBoxToClient(int client, const float bottomCorner[3], const float upperCorner[3], int modelIndex, int haloIndex, int startFrame = 0, int frameRate = 30, float life = 5.0, float width = 5.0, float endWidth = 5.0, int fadeLength = 2, float amplitude = 1.0, const int color[4] =  { 255, 0, 0, 255 }, int speed = 0)
 {
-	int clients[1]; clients[0] = client;
-	Effect_DrawBeamBox(clients, 1, bottomCorner, upperCorner, modelIndex, haloIndex, startFrame, frameRate, life, width, endWidth, fadeLength, amplitude, color, speed);
+    int clients[1]; clients[0] = client;
+    Effect_DrawBeamBox(clients, 1, bottomCorner, upperCorner, modelIndex, haloIndex, startFrame, frameRate, life, width, endWidth, fadeLength, amplitude, color, speed);
 }
 
 //https://github.com/bcserv/smlib/blob/aad2c8e963dbd7790096efd7920bd9f3cf76082d/scripting/include/smlib/effects.inc#L293-L349
 stock void Effect_DrawBeamBox(int[] clients, int numClients, const float bottomCorner[3], const float upperCorner[3], int modelIndex, int haloIndex, int startFrame = 0, int frameRate = 30, float life = 5.0, float width = 5.0, float endWidth = 5.0, int fadeLength = 2, float amplitude = 1.0, const int color[4] =  { 255, 0, 0, 255 }, int speed = 0)
 {
-	float corners[8][3];
+    float corners[8][3];
 
-	for(int i = 0; i < 4; i++)
-	{
-		CopyArrayToArray(bottomCorner, corners[i], 3);
-		CopyArrayToArray(upperCorner, corners[i + 4], 3);
-	}
+    for(int i = 0; i < 4; i++)
+    {
+        CopyArrayToArray(bottomCorner, corners[i], 3);
+        CopyArrayToArray(upperCorner, corners[i + 4], 3);
+    }
 
-	corners[1][0] = upperCorner[0];
-	corners[2][0] = upperCorner[0];
-	corners[2][1] = upperCorner[1];
-	corners[3][1] = upperCorner[1];
-	corners[4][0] = bottomCorner[0];
-	corners[4][1] = bottomCorner[1];
-	corners[5][1] = bottomCorner[1];
-	corners[7][0] = bottomCorner[0];
+    corners[1][0] = upperCorner[0];
+    corners[2][0] = upperCorner[0];
+    corners[2][1] = upperCorner[1];
+    corners[3][1] = upperCorner[1];
+    corners[4][0] = bottomCorner[0];
+    corners[4][1] = bottomCorner[1];
+    corners[5][1] = bottomCorner[1];
+    corners[7][0] = bottomCorner[0];
 
-	for(int i = 0; i < 4; i++)
-	{
-		int j = (i == 3 ? 0 : i + 1);
-		TE_SetupBeamPoints(corners[i], corners[j], modelIndex, haloIndex, startFrame, frameRate, life, width, endWidth, fadeLength, amplitude, color, speed);
-		TE_Send(clients, numClients);
-	}
+    for(int i = 0; i < 4; i++)
+    {
+        int j = (i == 3 ? 0 : i + 1);
+        TE_SetupBeamPoints(corners[i], corners[j], modelIndex, haloIndex, startFrame, frameRate, life, width, endWidth, fadeLength, amplitude, color, speed);
+        TE_Send(clients, numClients);
+    }
 
-	for(int i = 4; i < 8; i++)
-	{
-		int j = (i == 7 ? 4 : i + 1);
-		TE_SetupBeamPoints(corners[i], corners[j], modelIndex, haloIndex, startFrame, frameRate, life, width, endWidth, fadeLength, amplitude, color, speed);
-		TE_Send(clients, numClients);
-	}
+    for(int i = 4; i < 8; i++)
+    {
+        int j = (i == 7 ? 4 : i + 1);
+        TE_SetupBeamPoints(corners[i], corners[j], modelIndex, haloIndex, startFrame, frameRate, life, width, endWidth, fadeLength, amplitude, color, speed);
+        TE_Send(clients, numClients);
+    }
 
-	for(int i = 0; i < 4; i++)
-	{
-		TE_SetupBeamPoints(corners[i], corners[i + 4], modelIndex, haloIndex, startFrame, frameRate, life, width, endWidth, fadeLength, amplitude, color, speed);
-		TE_Send(clients, numClients);
-	}
+    for(int i = 0; i < 4; i++)
+    {
+        TE_SetupBeamPoints(corners[i], corners[i + 4], modelIndex, haloIndex, startFrame, frameRate, life, width, endWidth, fadeLength, amplitude, color, speed);
+        TE_Send(clients, numClients);
+    }
 }
 
 stock void CopyArrayToArray(const any[] array, any[] newArray, int size)
 {
-	for(int i = 0; i < size; i++)
+    for(int i = 0; i < size; i++)
     {
-		newArray[i] = array[i];
+        newArray[i] = array[i];
     }
 }
