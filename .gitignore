@@ -1,0 +1,8 @@
+### VisualStudioCode ###
+.vscode/*
+.vscode/settings.json
+.vscode/tasks.json
+*.code-workspace
+
+### SourcePawn ###
+*.smx
