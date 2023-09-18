@@ -1,7 +1,7 @@
 <div align="center">
   <h1><code>NoGun</code></h1>
   <p>
-    <strong>Short Description</strong>
+    <strong>Allows the player to do map mechanics without a gun.</strong>
   </p>
   <p style="margin-bottom: 0.5ex;">
     <img
