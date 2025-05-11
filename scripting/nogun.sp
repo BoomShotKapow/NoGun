@@ -283,8 +283,11 @@ bool TREnumSolid(int entity, any client)
             return true;
         }
 
+        SDKHooks_TakeDamage(entity, 0, client, 1.0, DMG_BULLET, _, _, _, false);
+
         if(!AcceptEntityInput(entity, "Break", client, client))
         {
+            PrintDebug("[%s] (%d): Failed to accept input: Break", className, entity);
             LogError("[NoGun]: Entity [%s] - Failed to accept input: Break");
         }
     }
