@@ -3,6 +3,7 @@
 #include <sdktools>
 #include <sdkhooks>
 #include <mycolors>
+#include <cstrike>
 
 #pragma newdecls required
 #pragma semicolon 1
@@ -32,7 +33,7 @@ Cookie gC_ImpactColorIndex = null;
 
 bool gB_Late;
 bool gB_ShowImpacts[MAXPLAYERS + 1] = {true, ...};
-bool gB_Debug;
+bool gB_Debug = true;
 
 public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max)
 {
@@ -121,6 +122,13 @@ public Action Command_NoGun(int client, int args)
     if(!IsValidClient(client))
     {
         return Plugin_Handled;
+    }
+
+    int iWeapon = GetEntPropEnt(client, Prop_Data, "m_hActiveWeapon");
+
+    if(iWeapon != -1 && IsValidEntity(iWeapon) && GetEntPropEnt(iWeapon, Prop_Send, "m_hOwnerEntity") == client)
+    {
+        CS_DropWeapon(client, iWeapon, true);
     }
 
     CreateNoGunMenu(client);
@@ -283,12 +291,13 @@ bool TREnumSolid(int entity, any client)
             return true;
         }
 
-        SDKHooks_TakeDamage(entity, 0, client, 1.0, DMG_BULLET, _, _, _, false);
-
-        if(!AcceptEntityInput(entity, "Break", client, client))
+        if(StrContains(className, "breakable") != -1)
         {
-            PrintDebug("[%s] (%d): Failed to accept input: Break", className, entity);
-            LogError("[NoGun]: Entity [%s] - Failed to accept input: Break");
+            if(!AcceptEntityInput(entity, "Break", client, client))
+            {
+                PrintDebug("[%s] (%d): Failed to accept input: Break", className, entity);
+                LogError("[NoGun]: Entity [%s] - Failed to accept input: Break");
+            }
         }
     }
     else if(StrContains(className, "button") != -1)
@@ -297,9 +306,9 @@ bool TREnumSolid(int entity, any client)
         {
             return true;
         }
-
-        SDKHooks_TakeDamage(entity, 0, client, 1.0, DMG_BULLET, _, _, _, false);
     }
+
+    SDKHooks_TakeDamage(entity, 0, client, 1.0, DMG_BULLET, _, _, _, false);
 
     return false;
 }
@@ -316,17 +325,26 @@ stock void PrintDebug(const char[] message, any...)
         return;
     }
 
-    char buffer[255];
+    char buffer[1024];
     VFormat(buffer, sizeof(buffer), message, 2);
 
-    PrintToServer(buffer);
+    if(strlen(buffer) >= 255)
+    {
+        PrintToServer(buffer);
+    }
 
     for(int client = 1; client <= MaxClients; client++)
     {
-        if(IsClientConnected(client) && CheckCommandAccess(client, "sm_nogun_debug", ADMFLAG_ROOT))
+        if(IsClientConnected(client) && CheckCommandAccess(client, "sm_getmap_debug", ADMFLAG_ROOT))
         {
-            PrintToConsole(client, buffer);
-            return;
+            if(strlen(buffer) >= 255)
+            {
+                PrintToConsole(client, buffer);
+            }
+            else
+            {
+                PrintToChat(client, buffer);
+            }
         }
     }
 }
