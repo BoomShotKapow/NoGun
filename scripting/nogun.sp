@@ -283,12 +283,13 @@ bool TREnumSolid(int entity, any client)
             return true;
         }
 
-        SDKHooks_TakeDamage(entity, 0, client, 1.0, DMG_BULLET, _, _, _, false);
-
-        if(!AcceptEntityInput(entity, "Break", client, client))
+        if(StrContains(className, "breakable") != -1)
         {
-            PrintDebug("[%s] (%d): Failed to accept input: Break", className, entity);
-            LogError("[NoGun]: Entity [%s] - Failed to accept input: Break");
+            if(!AcceptEntityInput(entity, "Break", client, client))
+            {
+                PrintDebug("[%s] (%d): Failed to accept input: Break", className, entity);
+                LogError("[NoGun]: Entity [%s] - Failed to accept input: Break");
+            }
         }
     }
     else if(StrContains(className, "button") != -1)
@@ -297,9 +298,9 @@ bool TREnumSolid(int entity, any client)
         {
             return true;
         }
-
-        SDKHooks_TakeDamage(entity, 0, client, 1.0, DMG_BULLET, _, _, _, false);
     }
+
+    SDKHooks_TakeDamage(entity, 0, client, 1.0, DMG_BULLET, _, _, _, false);
 
     return false;
 }
