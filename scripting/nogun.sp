@@ -34,6 +34,7 @@ Cookie gC_BlockPickupCookie = null;
 bool gB_Late;
 bool gB_ShowImpacts[MAXPLAYERS + 1] = {true, ...};
 bool gB_BlockPickup[MAXPLAYERS + 1] = {false, ...};
+bool gB_TempUnblock[MAXPLAYERS + 1] = {false, ...};
 bool gB_Debug;
 
 public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max)
@@ -52,6 +53,9 @@ public void OnPluginStart()
     gC_ShowImpactsCookie = new Cookie("sm_nogunimpacts", "Toggle the displaying of the NoGun show impacts.", CookieAccess_Protected);
     gC_ImpactColorIndex = new Cookie("sm_nogunimpactcolor", "The display color of the NoGun impacts.", CookieAccess_Protected);
     gC_BlockPickupCookie = new Cookie("sm_nogunblockpickup", "Toggle blocking weapon pickups.", CookieAccess_Protected);
+
+    AddCommandListener(Command_TempUnblock, "sm_glock");
+    AddCommandListener(Command_TempUnblock, "sm_usp");
 
     for(int client = 1; client <= MaxClients; client++)
     {
@@ -104,12 +108,39 @@ public void OnClientPutInServer(int client)
 
 public Action OnWeaponCanUse(int client, int weapon)
 {
+    if(gB_TempUnblock[client])
+    {
+        return Plugin_Continue;
+    }
+
     if(gB_BlockPickup[client])
     {
         return Plugin_Handled;
     }
     
     return Plugin_Continue;
+}
+
+public Action Command_TempUnblock(int client, const char[] command, int argc)
+{
+    if(client > 0 && gB_BlockPickup[client])
+    {
+        gB_TempUnblock[client] = true;
+        CreateTimer(0.01, Timer_ResetTempUnblock, GetClientUserId(client));
+    }
+    
+    return Plugin_Continue;
+}
+
+public Action Timer_ResetTempUnblock(Handle timer, any userid)
+{
+    int client = GetClientOfUserId(userid);
+    if(client > 0)
+    {
+        gB_TempUnblock[client] = false;
+    }
+    
+    return Plugin_Stop;
 }
 
 public void OnClientConnected(int client)
